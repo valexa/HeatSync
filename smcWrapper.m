@@ -42,7 +42,7 @@ io_connect_t conn;
 
 #pragma mark temps
 
-+(NSDictionary*)allocAllKeys{
++(NSDictionary*)getAllKeys{
 	NSMutableDictionary *keys = [[NSMutableDictionary alloc] init];
 	[keys setValue:@"Memory Controller" forKey:@"Tm0P"];
 	[keys setValue:@"Mem Bank A1" forKey:@"TM0P"];
@@ -119,11 +119,30 @@ io_connect_t conn;
 	[keys setValue:@"Power supply 4" forKey:@"Tp3P"];
 	[keys setValue:@"Power supply 5" forKey:@"Tp4P"];
 	[keys setValue:@"Power supply 6" forKey:@"Tp5P"];
-	
-	return keys;
+    //keys from SMART, not from SMC
+	[keys setValue:@"SMART HDD Drive 1" forKey:@"SMART1"];
+	[keys setValue:@"SMART HDD Drive 2" forKey:@"SMART2"];
+	[keys setValue:@"SMART HDD Drive 3" forKey:@"SMART3"];
+	[keys setValue:@"SMART HDD Drive 4" forKey:@"SMART4"];        
+    /*    
+	[keys setValue:@"MB unknown AC power related (ui8)" forKey:@"ACCL"];
+	[keys setValue:@"MB unknown AC power related (ui8)" forKey:@"ACEN"];
+	[keys setValue:@"MB unknown AC power related (flag)" forKey:@"ACFP"];
+	[keys setValue:@"MB unknown AC power related (ch8*)" forKey:@"ACID"];
+	[keys setValue:@"MB unknown AC power related (flag)" forKey:@"ACIN"];
+	[keys setValue:@"MB unknown AC power related (flag)" forKey:@"ACOW"];    
+	[keys setValue:@"MB unknown battery related (si16)" forKey:@"B0AC"];
+	[keys setValue:@"MB unknown battery related (flag)" forKey:@"B0AP"];
+	[keys setValue:@"MB unknown battery related (ui16)" forKey:@"B0AV"];
+	[keys setValue:@"MB unknown battery related (ui16)" forKey:@"B0Ad"];
+	[keys setValue:@"MB unknown battery related (ui16)" forKey:@"B0Al"];
+	[keys setValue:@"MB unknown battery related (ui8)" forKey:@"B0Am"];
+	[keys setValue:@"MB unknown battery related (ui8)" forKey:@"B0Ar"];  
+    */     
+	return [keys autorelease];
 }
 
-+ (NSDictionary*)allocFoundKeys:(NSDictionary*)keys {
++ (NSDictionary*)getFoundKeys:(NSDictionary*)keys {
 	NSMutableDictionary *foundKeys = [[NSMutableDictionary alloc] init];
     SMCVal_t      val;	
 	for(NSString *key in keys){
@@ -137,7 +156,7 @@ io_connect_t conn;
 		}
 	}
 	if ([foundKeys count] == 0) NSLog(@"allocFoundKeys found nothing");
-	return foundKeys;
+	return [foundKeys autorelease];
 }
 
 #pragma mark fans

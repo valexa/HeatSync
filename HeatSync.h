@@ -34,6 +34,6 @@
 @property (retain) HeatSyncPreferences *preferences;
 
 -(void)saveSetting:(id)object forKey:(NSString*)key;
-
+-(NSDictionary*)editNestedDict:(NSDictionary*)dict setObject:(id)object forKeyHierarchy:(NSArray*)hierarchy;
 
 @end

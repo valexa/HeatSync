@@ -24,8 +24,8 @@
 
 @interface HeatSyncPreferences : NSViewController {	
 	
-	IBOutlet NSImageView *thermometer;
-	IBOutlet NSImageView *fan;	
+	IBOutlet NSImageView *thermometerImage;
+	IBOutlet NSImageView *fanImage;	
 
 	IBOutlet NSButton *airButton;
 	IBOutlet NSButton *hddButton;
@@ -55,14 +55,29 @@
 	IBOutlet NSTextField *hddDegree;
 	IBOutlet NSTextField *cpuDegree;	
 	
+	IBOutlet NSImageView *backgroundHeaders; 
+    
+	IBOutlet NSView *regularFansView;
+	IBOutlet NSView *macbookFansView;     
+    
+	IBOutlet NSButton *macbookButton;
+	IBOutlet NSImageView *macbookConnector;    
+    
+	IBOutlet NSLevelIndicator *mbLeftFanLevel;
+	IBOutlet NSLevelIndicator *mbRightFanLevel;
+	
+	IBOutlet NSTextField *mbLeftFanText;
+	IBOutlet NSTextField *mbRightFanText;    
+	
 }
 
 -(void)saveSetting:(id)object forKey:(NSString*)key;
--(void)setMinRpm:(NSString*)type;
+-(void)setMinRpm:(NSString*)fanName;
 -(void)syncUI;
 -(IBAction)togAir:(id)sender;
 -(IBAction)togHdd:(id)sender;
 -(IBAction)togCpu:(id)sender;
+-(IBAction)togMacbok:(id)sender;
 -(IBAction)changeDegrees:(id)sender;
 -(NSString*)noNilStr:(NSString*)str;
 	

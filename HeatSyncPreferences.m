@@ -78,24 +78,19 @@
 	[dict release];
 }
 
--(void)setMinRpm:(NSString*)type{
-	NSString *fanName = nil;
-	if ([type isEqualToString:@"ambient"]) {	
-		fanName = @"ODD";
-	}
-	if ([type isEqualToString:@"hdd"]) {	
-		fanName = @"HDD";
-	}
-	if ([type isEqualToString:@"cpu"]) {	
-		fanName = @"CPU";
-	}	
+-(void)setMinRpm:(NSString*)fanName{  
 	
 	NSDictionary *defaults = [[NSUserDefaults standardUserDefaults] persistentDomainForName:PREFS_PLIST_DOMAIN];	
 	NSDictionary *fans = [[[defaults objectForKey:PLUGIN_NAME_STRING] objectForKey:@"settings"] objectForKey:@"fans"];	
-	NSNumber *min = [[fans objectForKey:fanName] objectForKey:@"min"];
-	int theId = [[[fans objectForKey:fanName] objectForKey:@"id"] intValue];
-	NSLog(@"Setting fan RPM to %@ for %@(%i)",min,fanName,theId);	
-	[smcWrapper setFanRpm:[NSString stringWithFormat:@"F%dMn",theId] value:[min tohex]];		
+    NSDictionary *fan = [fans objectForKey:fanName];
+    if (fan){
+        NSNumber *min = [fan objectForKey:@"min"];
+        int theId = [[fan objectForKey:@"id"] intValue];
+        NSLog(@"Setting fan RPM to %@ for %@(%i)",min,fanName,theId);	
+        [smcWrapper setFanRpm:[NSString stringWithFormat:@"F%dMn",theId] value:[min tohex]];        
+    }else{
+        NSLog(@"Unable to set min for fan %@",fanName);
+    }		
 }
 
 -(IBAction)togAir:(id)sender{		
@@ -105,7 +100,7 @@
 	}else {
 		[airConnector setHidden:YES];		
 		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togAir"];
-		[self setMinRpm:@"ambient"];
+		[self setMinRpm:@"ODD"];
 	}		
 }
 
@@ -116,7 +111,7 @@
 	}else {
 		[hddConnector setHidden:YES];
 		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togHdd"];
-		[self setMinRpm:@"hdd"];		
+		[self setMinRpm:@"HDD"];		
 	}	
 }
 
@@ -127,11 +122,26 @@
 	}else {
 		[cpuConnector setHidden:YES];		
 		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togCpu"];
-		[self setMinRpm:@"cpu"];		
+		[self setMinRpm:@"CPU"];		
+	}		
+}
+
+-(IBAction)togMacbok:(id)sender{		
+	if ([sender state] == 1){
+		[macbookConnector setHidden:NO];		
+		[self saveSetting:[NSNumber numberWithBool:YES] forKey:@"togMacbook"];
+	}else {
+		[macbookConnector setHidden:YES];		
+		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togMacbook"];
+		[self setMinRpm:@"Leftside"];
+		[self setMinRpm:@"Rightside"];        
 	}		
 }
 
 -(void)syncUI{
+    
+    [regularFansView removeFromSuperview];
+    [macbookFansView removeFromSuperview];    
 
 	NSString *smcpath = [NSString stringWithFormat:@"%@/Library/Application Support/HeatSync/smc",NSHomeDirectory()];	    
 	NSDictionary *fdict = [[NSFileManager defaultManager] attributesOfItemAtPath:smcpath error:nil];
@@ -139,10 +149,12 @@
 		[airButton setEnabled:YES];
 		[cpuButton setEnabled:YES];
 		[hddButton setEnabled:YES];	
+		[macbookButton setEnabled:YES];	        
 	} else {
 		[airButton setEnabled:NO];
 		[cpuButton setEnabled:NO];
 		[hddButton setEnabled:NO];
+		[macbookButton setEnabled:NO];        
 	}    
 		
 	NSDictionary *defaults = [[NSUserDefaults standardUserDefaults] persistentDomainForName:PREFS_PLIST_DOMAIN];	
@@ -174,9 +186,17 @@
 		[cpuButton setState:0];
 		[cpuConnector setHidden:YES];		
 	}	
+    
+	if ([[settings objectForKey:@"togMacbook"] boolValue] == YES) {
+		[macbookButton setState:1];
+		[macbookConnector setHidden:NO];		
+	}else {
+		[macbookButton setState:0];
+		[macbookConnector setHidden:YES];		
+	}    
 	
-	[thermometer setToolTip:[allTemps description]];	
-	[fan setToolTip:[fans description]];	
+	[thermometerImage setToolTip:[allTemps description]];	
+	[fanImage setToolTip:[fans description]];	
 	
 	[airTempText setStringValue:[self noNilStr:[[temps objectForKey:@"ambient"] objectForKey:@"curr"]]];
 	[hddTempText setStringValue:[self noNilStr:[[temps objectForKey:@"hdd"] objectForKey:@"curr"]]];
@@ -187,6 +207,9 @@
 	[airFanText setStringValue:[self noNilStr:[[fans objectForKey:@"ODD"] objectForKey:@"curr"]]];
 	[hddFanText setStringValue:[self noNilStr:[[fans objectForKey:@"HDD"] objectForKey:@"curr"]]];
 	[cpuFanText setStringValue:[self noNilStr:[[fans objectForKey:@"CPU"] objectForKey:@"curr"]]];	
+
+	[mbLeftFanText setStringValue:[self noNilStr:[[fans objectForKey:@"Leftside"] objectForKey:@"curr"]]];
+	[mbRightFanText setStringValue:[self noNilStr:[[fans objectForKey:@"Rightside"] objectForKey:@"curr"]]];	    
 	
 	for (NSString *key in temps){
 		NSLevelIndicator *indicator = nil;
@@ -224,18 +247,57 @@
 			NSLog(@"Unbound temp type (%@)",key);
 		}		
 	}	
+    
+    //handle missing temps
+    if ([temps objectForKey:@"ambient"] == nil || [[[temps objectForKey:@"ambient"] objectForKey:@"curr"] intValue] == 0) {
+        [airTempLevel setHidden:YES];
+		[airButton setHidden:YES];		
+		[airConnector setHidden:YES];
+		[airDegree setStringValue:@""]; 
+        [airTempText setStringValue:@""];        
+    }
+    if ([temps objectForKey:@"hdd"] == nil || [[[temps objectForKey:@"hdd"] objectForKey:@"curr"] intValue] == 0) {
+        [hddTempLevel setHidden:YES];
+		[hddButton setHidden:YES];
+		[hddConnector setHidden:YES];
+		[hddDegree setStringValue:@""];         
+        [hddTempText setStringValue:@""];        
+    }
+    if ([temps objectForKey:@"cpu"] == nil || [[[temps objectForKey:@"cpu"] objectForKey:@"curr"] intValue] == 0) {
+        [cpuTempLevel setHidden:YES];
+		[cpuButton setHidden:YES];
+		[cpuConnector setHidden:YES];
+		[cpuDegree setStringValue:@""];
+        [cpuTempText setStringValue:@""];        
+    }    
 	
 	for (NSString *key in fans){
 		NSLevelIndicator *indicator = nil;
+        
 		if ([key isEqualToString:@"ODD"]) {
 			indicator = airFanLevel;
-		}
-		if ([key isEqualToString:@"HDD"]) {
+		}else if ([key isEqualToString:@"HDD"]) {
 			indicator = hddFanLevel;
-		}
-		if ([key isEqualToString:@"CPU"]) {
+		}else if ([key isEqualToString:@"CPU"]) {
 			indicator = cpuFanLevel;
-		}	
+		}else{
+            [self.view addSubview:macbookFansView];
+            [macbookFansView setFrame:NSMakeRect(19, 0, 243, 170)];
+            NSImage *foo = [[[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"header_macbook.png"]] autorelease];            
+            [backgroundHeaders setImage:foo];                        
+        }
+        
+		if ([key isEqualToString:@"Leftside"]) {
+			indicator = mbLeftFanLevel;
+		}else if ([key isEqualToString:@"Rightside"]) {
+			indicator = mbRightFanLevel;
+		}else{
+            [self.view addSubview:regularFansView];
+            [regularFansView setFrame:NSMakeRect(19, 0, 243, 170)];            
+            NSImage *foo = [[[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"header.png"]] autorelease];             
+            [backgroundHeaders setImage:foo];        
+        }     
+        
 		if (indicator) {
 			NSDictionary *dict = [fans objectForKey:key];
 			double curr = [[dict objectForKey:@"curr"] doubleValue];
@@ -251,7 +313,25 @@
 		}else {
 			NSLog(@"Unbound fan type (%@)",key);
 		}		
-	}		
+	}	 
+    
+    //hide connectors if there are no fans
+    if ([fans objectForKey:@"ODD"] == nil) {      
+		[airButton setHidden:YES];		
+		[airConnector setHidden:YES];		        
+    }
+    if ([fans objectForKey:@"HDD"] == nil) {      
+		[hddButton setHidden:YES];
+		[hddConnector setHidden:YES];	        
+    }
+    if ([fans objectForKey:@"CPU"] == nil) {     
+		[cpuButton setHidden:YES];
+		[cpuConnector setHidden:YES];	        
+    }
+    if ([fans objectForKey:@"Leftside"] == nil || [fans objectForKey:@"Rightside"] == nil) {     
+		[macbookButton setHidden:YES];
+		[macbookConnector setHidden:YES];	        
+    }    
 	
 }
 
@@ -273,22 +353,37 @@
 			celsius = NO;			
 		}		
 	}			
+    
+    if (air > 0) {
+        if (celsius == NO) {
+            [airTempText setStringValue:[NSString stringWithFormat:@"%i",(int)(air*1.8)+32]];
+            [airDegree setStringValue:@"°F"];
+        }else {		
+            [airTempText setStringValue:[NSString stringWithFormat:@"%i",air]];
+            [airDegree setStringValue:@"°C"];
+        }        
+    }
+    
+    if (hdd > 0) {
+        if (celsius == NO) {
+            [hddTempText setStringValue:[NSString stringWithFormat:@"%i",(int)(hdd*1.8)+32]];
+            [hddDegree setStringValue:@"°F"];	
+        }else {		
+            [hddTempText setStringValue:[NSString stringWithFormat:@"%i",hdd]];
+            [hddDegree setStringValue:@"°C"];	
+        }  
+    }
+    
+    if (cpu > 0) {
+        if (celsius == NO) {
+            [cpuTempText setStringValue:[NSString stringWithFormat:@"%i",(int)(cpu*1.8)+32]];
+            [cpuDegree setStringValue:@"°F"];	
+        }else {		
+            [cpuTempText setStringValue:[NSString stringWithFormat:@"%i",cpu]];		
+            [cpuDegree setStringValue:@"°C"];		
+        }  
+    }    
 	
-	if (celsius == NO) {
-		[airTempText setStringValue:[NSString stringWithFormat:@"%i",(int)(air*1.8)+32]];
-		[hddTempText setStringValue:[NSString stringWithFormat:@"%i",(int)(hdd*1.8)+32]];
-		[cpuTempText setStringValue:[NSString stringWithFormat:@"%i",(int)(cpu*1.8)+32]];
-		[airDegree setStringValue:@"°F"];
-		[hddDegree setStringValue:@"°F"];
-		[cpuDegree setStringValue:@"°F"];	
-	}else {		
-		[airTempText setStringValue:[NSString stringWithFormat:@"%i",air]];
-		[hddTempText setStringValue:[NSString stringWithFormat:@"%i",hdd]];
-		[cpuTempText setStringValue:[NSString stringWithFormat:@"%i",cpu]];		
-		[airDegree setStringValue:@"°C"];
-		[hddDegree setStringValue:@"°C"];
-		[cpuDegree setStringValue:@"°C"];		
-	}
 }
 
 -(NSString*)noNilStr:(NSString*)str{

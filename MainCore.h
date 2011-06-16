@@ -32,10 +32,11 @@
 -(NSDictionary*)editNestedDict:(NSDictionary*)dict setObject:(id)object forKeyHierarchy:(NSArray*)hierarchy;
 -(void)findFans;
 -(void)syncFans;
--(void)setFanSpeed:(NSString*)speed forTemp:(NSString*)type;
+-(void)setFanSpeed:(NSString*)speed ifEnabledFor:(NSString*)type;
+-(void)setFanSpeed:(NSString*)speed withName:(NSString*)name;
 -(void)syncTemp;
 -(void)checkLoop;
--(NSDictionary*)getAverages:(NSDictionary*)foundKeys;
--(NSDictionary*)getMaximum:(NSDictionary*)foundKeys;
+-(NSDictionary*)getAvgAndHigh:(NSDictionary*)foundKeys;
+-(NSDictionary*)refValuesForMachine;
 
 @end

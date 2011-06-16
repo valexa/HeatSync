@@ -24,6 +24,8 @@
 #import "MainCore.h"
 #import "smcWrapper.h"
 
+#define PLUGIN_NAME_STRING @"HeatSync"
+
 static NSBundle* pluginBundle = nil;
 
 @implementation HeatSync
@@ -99,24 +101,52 @@ static NSBundle* pluginBundle = nil;
 	[main release];
 }	
 
--(void)saveSetting:(id)object forKey:(NSString*)key{
-	NSString *pluginName = @"HeatSync";
+-(void)saveSetting:(id)object forKey:(NSString*)key{   
+    //this is the method for when the host application is not SytemPreferences (MagicPrefsPlugins or your standalone)      
 	if (![[object class] isKindOfClass:[NSObject class]]) {
-		NSLog(@"The value to be set for %@ is not a object",key);
+		NSLog(@"The value to be set for %@ is not a object",key); 
 		return;
-	}
-	NSMutableDictionary *settings = [[[defaults objectForKey:pluginName] objectForKey:@"settings"] mutableCopy];
-	if (settings == nil) settings = [[NSMutableDictionary alloc] initWithCapacity:1];	
-	[settings setObject:object forKey:key];
-	NSMutableDictionary *dict = [[defaults objectForKey:pluginName] mutableCopy];
-	if (dict == nil) dict = [[NSMutableDictionary alloc] initWithCapacity:1];	
-	[dict setObject:settings forKey:@"settings"];
-	
-	[defaults setObject:dict forKey:pluginName];
-	[defaults synchronize];
-	
-	[settings release];		
-	[dict release];
+	}     
+    NSDictionary *prefs = [NSDictionary dictionaryWithDictionary:[defaults objectForKey:PLUGIN_NAME_STRING]];    
+    if ([prefs objectForKey:@"settings"] == nil) {
+        NSMutableDictionary *d = [[NSMutableDictionary dictionaryWithDictionary:prefs] autorelease];
+        [d setObject:[[[NSDictionary alloc] init] autorelease] forKey:@"settings"];
+        prefs = d;
+    }
+    NSDictionary *db = [self editNestedDict:prefs setObject:object forKeyHierarchy:[NSArray arrayWithObjects:@"settings",key,nil]];
+    [defaults setObject:db forKey:PLUGIN_NAME_STRING];        
+    [defaults synchronize];
+}
+
+-(NSDictionary*)editNestedDict:(NSDictionary*)dict setObject:(id)object forKeyHierarchy:(NSArray*)hierarchy{
+    if (dict == nil) return dict;
+    if (![dict isKindOfClass:[NSDictionary class]]) return dict;    
+    NSMutableDictionary *parent = [[dict mutableCopy] autorelease];
+    
+    //drill down mutating each dict along the way
+    NSMutableArray *structure = [NSMutableArray arrayWithCapacity:1];    
+    NSMutableDictionary *prev = parent;
+    for (id key in hierarchy) {
+        if (key != [hierarchy lastObject]) {
+            prev = [[[prev objectForKey:key] mutableCopy] autorelease];                            
+            if (![prev isKindOfClass:[NSDictionary class]]) return dict;              
+            [structure addObject:prev];
+        }
+    }   
+    
+    //do the change
+    [[structure lastObject] setObject:object forKey:[hierarchy lastObject]];    
+    
+    //drill back up saving the changes each step along the way   
+    for (int c = [structure count]-1; c >= 0; c--) {
+        if (c == 0) {
+            [parent setObject:[structure objectAtIndex:c] forKey:[hierarchy objectAtIndex:c]];                                
+        }else{
+            [[structure objectAtIndex:c-1] setObject:[structure objectAtIndex:c] forKey:[hierarchy objectAtIndex:c]];                                
+        }       
+    }
+    
+    return parent;
 }
 
 @end

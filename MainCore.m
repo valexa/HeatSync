@@ -21,6 +21,7 @@
 
 #import "MainCore.h"
 #import "smcWrapper.h"
+#import "VADiskPooler.h"
 
 #if PLUGIN //set in project's GCC_PREPROCESSOR_DEFINITIONS
 	#define PREF_OBSERVER_NAME_STRING @"MPPluginHeatSyncPreferencesEvent"
@@ -45,7 +46,7 @@
 		[self findFans];	
 		
 		[self checkLoop];
-		
+        		
 		[NSTimer scheduledTimerWithTimeInterval:30 target:self selector:@selector(checkLoop) userInfo:nil repeats:YES];			
 		
     }
@@ -58,7 +59,7 @@
 	[fans release];	
 }
 
--(void)saveSetting:(id)object forKey:(NSString*)key{   
+-(void)saveSetting:(id)object forKey:(NSString*)key{ 
     //this is the method for when the host application is not SytemPreferences (MagicPrefsPlugins or your standalone)      
 	if (![[object class] isKindOfClass:[NSObject class]]) {
 		NSLog(@"The value to be set for %@ is not a object",key); 
@@ -136,99 +137,141 @@
 	[fans addEntriesFromDictionary:updatedFans];
 }
 
--(void)setFanSpeed:(NSString*)speed forTemp:(NSString*)type{
-	
-	NSString *fanName = nil;
+-(void)setFanSpeed:(NSString*)speed ifEnabledFor:(NSString*)type{
+
 	NSDictionary *settings = [[defaults objectForKey:PLUGIN_NAME_STRING] objectForKey:@"settings"];		
 	if ([type isEqualToString:@"ambient"]) {
 		if ([[settings objectForKey:@"togAir"] boolValue] != YES) return;		
-		fanName = @"ODD";
+        [self setFanSpeed:speed withName:@"ODD"];
+        return;        
 	}
 	if ([type isEqualToString:@"hdd"]) {
 		if ([[settings objectForKey:@"togHdd"] boolValue] != YES) return;		
-		fanName = @"HDD";
+        [self setFanSpeed:speed withName:@"HDD"];        
+        return;        
 	}
 	if ([type isEqualToString:@"cpu"]) {
 		if ([[settings objectForKey:@"togCpu"] boolValue] != YES) return;		
-		fanName = @"CPU";
-	}	
-	
-	if (fanName) {
-		NSDictionary *fan = [fans objectForKey:fanName]; 		
-		int theId = [[fan objectForKey:@"id"] intValue];
-		NSNumber *min = [fan objectForKey:@"min"];		
-		NSNumber *max = [fan objectForKey:@"max"];
-		NSNumber *mid = [NSNumber numberWithInt:(([max intValue]-[min intValue])/2)+[min intValue]];
-		NSNumber *high = [NSNumber numberWithInt:[max intValue]-500];		
-		if (fan) {
-			if ([speed isEqualToString:@"low"]) {				
-				//NSLog(@"Setting fan RPM to %@ for %@(%i)",min,fanName,theId);
-				[smcWrapper setFanRpm:[NSString stringWithFormat:@"F%dMn",theId] value:[min tohex]];								
-			}
-			if ([speed isEqualToString:@"mid"]) {
-				//NSLog(@"Setting fan RPM to %@ for %@(%i)",mid,fanName,theId);				
-				[smcWrapper setFanRpm:[NSString stringWithFormat:@"F%dMn",theId] value:[mid tohex]];
-			}
-			if ([speed isEqualToString:@"high"]) {
-				//NSLog(@"Setting fan RPM to %@ for %@(%i)",high,fanName,theId);				
-				[smcWrapper setFanRpm:[NSString stringWithFormat:@"F%dMn",theId] value:[high tohex]];
-			}
-			if ([speed isEqualToString:@"max"]) {
-				//NSLog(@"Setting fan RPM to %@ for %@(%i)",max,fanName,theId);				
-				[smcWrapper setFanRpm:[NSString stringWithFormat:@"F%dMn",theId] value:[max tohex]];
-			}			
-		}else {
-			NSLog(@"No fan found for %@",fanName);			
-		}
-	}else {
-		NSLog(@"No fan for %@",type);
+        [self setFanSpeed:speed withName:@"CPU"];        
+        return;        
 	}
+	if ([type isEqualToString:@"Macbook"]) {
+		if ([[settings objectForKey:@"togMacbook"] boolValue] != YES) return;		
+        [self setFanSpeed:speed withName:@"Leftside"];           
+        [self setFanSpeed:speed withName:@"Rightside"];        
+        return;
+	}	
+    
+	NSLog(@"No fan for %@",type);
+}
+
+-(void)setFanSpeed:(NSString*)speed withName:(NSString*)name{
+    NSDictionary *fan = [fans objectForKey:name]; 		
+    int theId = [[fan objectForKey:@"id"] intValue];
+    NSNumber *min = [fan objectForKey:@"min"];		
+    NSNumber *max = [fan objectForKey:@"max"];
+    NSNumber *mid = [NSNumber numberWithInt:(([max intValue]-[min intValue])/2)+[min intValue]];
+    NSNumber *high = [NSNumber numberWithInt:[max intValue]-500];		
+    if (fan) {
+        if ([speed isEqualToString:@"low"]) {				
+            //NSLog(@"Setting fan RPM to %@ for %@(%i)",min,fanName,theId);
+            [smcWrapper setFanRpm:[NSString stringWithFormat:@"F%dMn",theId] value:[min tohex]];								
+        }
+        if ([speed isEqualToString:@"mid"]) {
+            //NSLog(@"Setting fan RPM to %@ for %@(%i)",mid,fanName,theId);				
+            [smcWrapper setFanRpm:[NSString stringWithFormat:@"F%dMn",theId] value:[mid tohex]];
+        }
+        if ([speed isEqualToString:@"high"]) {
+            //NSLog(@"Setting fan RPM to %@ for %@(%i)",high,fanName,theId);				
+            [smcWrapper setFanRpm:[NSString stringWithFormat:@"F%dMn",theId] value:[high tohex]];
+        }
+        if ([speed isEqualToString:@"max"]) {
+            //NSLog(@"Setting fan RPM to %@ for %@(%i)",max,fanName,theId);				
+            [smcWrapper setFanRpm:[NSString stringWithFormat:@"F%dMn",theId] value:[max tohex]];
+        }			
+    }else {
+        NSLog(@"No fan found for %@",name);			
+    }    
 }
 
 -(void)syncTemp{
-	
-	//refference values
-	NSDictionary *refValues = [NSDictionary dictionaryWithObjectsAndKeys:
-							   [NSDictionary dictionaryWithObjectsAndKeys:@"20",@"low",@"25",@"mid",@"30",@"high",@"35",@"max",nil],@"ambient",
-							   [NSDictionary dictionaryWithObjectsAndKeys:@"45",@"low",@"50",@"mid",@"55",@"high",@"60",@"max",nil],@"hdd",
-							   [NSDictionary dictionaryWithObjectsAndKeys:@"40",@"low",@"50",@"mid",@"60",@"high",@"90",@"max",nil],@"cpu",								
-							   nil];	
-	
+    
+    //reference values
+	NSDictionary *refValues = [self refValuesForMachine];
+    	
 	//actual values
-	NSDictionary *allKeys = [smcWrapper allocAllKeys];
-	NSDictionary *foundKeys = [smcWrapper allocFoundKeys:allKeys];
+	NSDictionary *allKeys = [smcWrapper getAllKeys];
+	NSDictionary *smcKeys = [smcWrapper getFoundKeys:allKeys];    
+    NSMutableDictionary *foundKeys = [NSMutableDictionary dictionaryWithDictionary:smcKeys];    
+    
+    //add smart temps
+    NSArray *drives = [VADiskPooler getDrives];
+    for (NSString *drive in drives) {
+        int temp = [VADiskPooler smartTemperature:drive];
+        //NSLog(@"SMART temp is %i for %@",temp,drive);                
+        [foundKeys setObject:[NSNumber numberWithInt:temp] forKey:[NSString stringWithFormat:@"SMART%i",[drives indexOfObject:drive]+1]];        
+    }   
 	
 	//extract avg and max
-	NSDictionary *avgDict = [self getAverages:foundKeys];
-	NSDictionary *maxDict = [self getMaximum:foundKeys];
+    NSDictionary *ah = [self getAvgAndHigh:foundKeys];
+	NSDictionary *avgDict = [ah objectForKey:@"a"];
+	NSDictionary *highestDict = [ah objectForKey:@"h"];
 	
-	for (NSString *key in refValues){
-		NSDictionary *refDict = [refValues objectForKey:key];
-		int max = [[maxDict objectForKey:key] intValue];
-		int avg = [[avgDict objectForKey:key] intValue];		
-		if (max != avg) {
-			NSLog(@"%@ max %i avg %i",key,max,avg);
-		}
-		if (max >= [[refDict objectForKey:@"max"] intValue]-1 ) {
-			//NSLog(@"%@ temp is max",key);
-			[self setFanSpeed:@"max" forTemp:key];
-			continue;
-		}
-		if (max >= [[refDict objectForKey:@"high"] intValue] ) {
-			//NSLog(@"%@ temp is high",key);
-			[self setFanSpeed:@"high" forTemp:key];			
-			continue;
-		}
-		if (max >= [[refDict objectForKey:@"mid"] intValue] ) {
-			//NSLog(@"%@ temp is mid",key);
-			[self setFanSpeed:@"mid" forTemp:key];			
-			continue;
-		}	
-		//NSLog(@"%@ temp is low",key);
-		[self setFanSpeed:@"low" forTemp:key];		
-	}	
+    if ([smcWrapper isDesktop] == YES) { 
+        for (NSString *key in refValues){
+            NSDictionary *refDict = [refValues objectForKey:key];
+            int highest = [[highestDict objectForKey:key] intValue];
+            int avg = [[avgDict objectForKey:key] intValue];		
+            if (highest != avg) {
+                NSLog(@"Multiple sensors for %@ (highest %i avg %i)",key,highest,avg);
+            }
+            if (highest >= [[refDict objectForKey:@"max"] intValue]-1 ) {
+                //NSLog(@"%@ temp is max %i",key,highest);
+                [self setFanSpeed:@"max" ifEnabledFor:key];
+            }else if (highest >= [[refDict objectForKey:@"high"] intValue] ) {
+                //NSLog(@"%@ temp is high %i",key,highest);
+                [self setFanSpeed:@"high" ifEnabledFor:key];			
+            }else if (highest >= [[refDict objectForKey:@"mid"] intValue] ) {
+                //NSLog(@"%@ temp is mid %i",key,highest);
+                [self setFanSpeed:@"mid" ifEnabledFor:key];			
+            }else{
+                //NSLog(@"%@ temp is low %i",key,highest);
+                [self setFanSpeed:@"low" ifEnabledFor:key];		                
+            }	
+        }        
+    }else{
+        int maxTotals = 0;
+        int highTotals = 0;
+        int midTotals = 0;
+        int highestTotal = 0;
+        for (NSString *key in refValues){
+            NSDictionary *refDict = [refValues objectForKey:key];
+            maxTotals += [[refDict objectForKey:@"max"] intValue];
+            highTotals += [[refDict objectForKey:@"high"] intValue];
+            midTotals += [[refDict objectForKey:@"mid"] intValue]; 
+            int highest = [[highestDict objectForKey:key] intValue];
+            int avg = [[avgDict objectForKey:key] intValue];		
+            if (highest != avg) {
+                NSLog(@"Multiple sensors for %@ (highest %i avg %i)",key,highest,avg);
+            }
+            highestTotal += highest;
+        }
+        if (highestTotal >= maxTotals) {
+            //NSLog(@"Macbook temp is max %i/%i",highestTotal,maxTotals);            
+            [self setFanSpeed:@"max" ifEnabledFor:@"Macbook"];            
+        }else if (highestTotal >= highTotals) {
+            //NSLog(@"Macbook temp is high %i/%i",highestTotal,highTotals);             
+            [self setFanSpeed:@"high" ifEnabledFor:@"Macbook"];            
+        }else if (highestTotal >= midTotals) {
+            //NSLog(@"Macbook temp is mid %i/%i",highestTotal,midTotals);             
+            [self setFanSpeed:@"mid" ifEnabledFor:@"Macbook"];
+        }else{
+            //NSLog(@"Macbook temp is low %i/%i",highestTotal,midTotals);             
+            [self setFanSpeed:@"low" ifEnabledFor:@"Macbook"];        
+        }        
+    }    
 	
-	//get all temps
+	//make list of temps associated with their descriptions
 	NSMutableDictionary *allTemps = [NSMutableDictionary dictionaryWithCapacity:1];
 	for (NSString *key in allKeys){
 		NSNumber *val = [foundKeys objectForKey:key];
@@ -236,23 +279,20 @@
 			//NSLog(@"%@ for %@ (%@)",val,key,[allKeys objectForKey:key]);
 			[allTemps setObject:val forKey:[allKeys objectForKey:key]];
 		}
-	}
+	}   
 	
 	//add current temps
 	[temps removeAllObjects];	
-	for (NSString *key in maxDict){
+	for (NSString *key in highestDict){
 		NSMutableDictionary *tmp = [[refValues objectForKey:key] mutableCopy];
-		[tmp setObject:[maxDict objectForKey:key] forKey:@"curr"];
+		[tmp setObject:[highestDict objectForKey:key] forKey:@"curr"];
 		[temps setObject:tmp forKey:key];		
 		[tmp release];
 	}
 	
 	[self saveSetting:allTemps forKey:@"allTemps"];
 	[self saveSetting:fans forKey:@"fans"];	
-	[self saveSetting:temps forKey:@"temps"];	
-	
-	[allKeys release];
-	[foundKeys release];	
+	[self saveSetting:temps forKey:@"temps"];		
 	
 }
 
@@ -263,33 +303,57 @@
 	[[NSDistributedNotificationCenter defaultCenter] postNotificationName:PREF_OBSERVER_NAME_STRING object:@"syncUI" userInfo:nil];	
 }
 
--(NSDictionary*)getAverages:(NSDictionary*)foundKeys{
-	NSMutableDictionary *ret = [NSMutableDictionary dictionaryWithCapacity:3];
+-(NSDictionary*)getAvgAndHigh:(NSDictionary*)foundKeys{
+    
+	NSMutableArray *ambients = [NSMutableArray arrayWithCapacity:1];    
 	NSMutableArray *hdds = [NSMutableArray arrayWithCapacity:1];
 	NSMutableArray *cpus = [NSMutableArray arrayWithCapacity:1];	
 	
 	for (NSString *key in foundKeys){		
-		if ([key isEqualToString:@"TA0P"]){
-			[ret setObject:[foundKeys objectForKey:key] forKey:@"ambient"];		
+        if ([smcWrapper isDesktop] != YES) {   
+            if ([key isEqualToString:@"TB0T"]){ //use bottom temp for macbooks
+                [ambients addObject:[foundKeys objectForKey:key]];		
+            }             
+            if ([key isEqualToString:@"Tm0P"]){ //use memory temp for macbooks
+                [hdds addObject:[foundKeys objectForKey:key]];			
+            }            
+        }         
+		if ([key isEqualToString:@"TA0P"] || [key isEqualToString:@"TA1P"]){
+			[ambients addObject:[foundKeys objectForKey:key]];			
 		}				
 		if ([key isEqualToString:@"TH0P"] || [key isEqualToString:@"TH1P"] || [key isEqualToString:@"TH2P"] || [key isEqualToString:@"TH3P"]){
 			[hdds addObject:[foundKeys objectForKey:key]];			
-		}				
+		}
+		if ([key isEqualToString:@"SMART1"] || [key isEqualToString:@"SMART2"] || [key isEqualToString:@"SMART3"] || [key isEqualToString:@"SMART4"]){
+			[hdds addObject:[foundKeys objectForKey:key]];			
+		}        
 		if ([key isEqualToString:@"TC0D"] || [key isEqualToString:@"TC0H"] || [key isEqualToString:@"TCAH"] || [key isEqualToString:@"TC1D"] || [key isEqualToString:@"TC1H"] || [key isEqualToString:@"TCBH"]){
 			[cpus addObject:[foundKeys objectForKey:key]];			
 		}
 	}	
-	
+
+	//get averages
+	NSMutableDictionary *average = [NSMutableDictionary dictionaryWithCapacity:3];    
 	int total;
+    
+	if ([ambients count] > 0) {
+		total = 0;
+		for (NSNumber *val in ambients){
+			total += [val intValue]; 
+		}
+		[average setObject:[NSNumber numberWithInt:total/[ambients count]] forKey:@"ambient"];			
+	}else {
+		NSLog(@"No Ambient sensors found");
+	}    
 	
 	if ([hdds count] > 0) {
 		total = 0;
 		for (NSNumber *val in hdds){
 			total += [val intValue]; 
 		}
-		[ret setObject:[NSNumber numberWithInt:total/[hdds count]] forKey:@"hdd"];			
+		[average setObject:[NSNumber numberWithInt:total/[hdds count]] forKey:@"hdd"];			
 	}else {
-		NSLog(@"No HDD's found");
+		NSLog(@"No HDD sensors found");
 	}
 	
 	if ([cpus count] > 0) {
@@ -297,47 +361,60 @@
 		for (NSNumber *val in cpus){
 			total += [val intValue]; 
 		}
-		[ret setObject:[NSNumber numberWithInt:total/[cpus count]] forKey:@"cpu"];				
+		[average setObject:[NSNumber numberWithInt:total/[cpus count]] forKey:@"cpu"];				
 	}else {
-		NSLog(@"No CPU's found");
+		NSLog(@"No CPU sensors found");
 	}
 	
-	return ret;
-}
-
--(NSDictionary*)getMaximum:(NSDictionary*)foundKeys{
-	NSMutableDictionary *ret = [NSMutableDictionary dictionaryWithCapacity:3];
-	NSMutableArray *hdds = [NSMutableArray arrayWithCapacity:1];
-	NSMutableArray *cpus = [NSMutableArray arrayWithCapacity:1];	
+    //get highest
+	NSMutableDictionary *highest = [NSMutableDictionary dictionaryWithCapacity:3];	
+	int high;    
+    
+	high = 0;
+	for (NSNumber *val in ambients){
+		if ([val intValue] > high) high = [val intValue]; 
+	}
+	[highest setObject:[NSNumber numberWithInt:high] forKey:@"ambient"];	    
 	
-	for (NSString *key in foundKeys){		
-		if ([key isEqualToString:@"TA0P"]){
-			[ret setObject:[foundKeys objectForKey:key] forKey:@"ambient"];		
-		}				
-		if ([key isEqualToString:@"TH0P"] || [key isEqualToString:@"TH1P"] || [key isEqualToString:@"TH2P"] || [key isEqualToString:@"TH3P"]){
-			[hdds addObject:[foundKeys objectForKey:key]];			
-		}				
-		if ([key isEqualToString:@"TC0D"] || [key isEqualToString:@"TC0H"] || [key isEqualToString:@"TCAH"] || [key isEqualToString:@"TC1D"] || [key isEqualToString:@"TC1H"] || [key isEqualToString:@"TCBH"]){
-			[cpus addObject:[foundKeys objectForKey:key]];			
-		}
-	}	
-	
-	int max;
-	
-	max = 0;
+	high = 0;
 	for (NSNumber *val in hdds){
-		if ([val intValue] > max) max = [val intValue]; 
+		if ([val intValue] > high) high = [val intValue]; 
 	}
-	[ret setObject:[NSNumber numberWithInt:max] forKey:@"hdd"];	
+	[highest setObject:[NSNumber numberWithInt:high] forKey:@"hdd"];	
 	
-	max = 0;
+	high = 0;
 	for (NSNumber *val in cpus){
-		if ([val intValue] > max) max = [val intValue];
+		if ([val intValue] > high) high = [val intValue];
 	}
-	[ret setObject:[NSNumber numberWithInt:max] forKey:@"cpu"];		
+	[highest setObject:[NSNumber numberWithInt:high] forKey:@"cpu"];	
 	
-	return ret;
+    
+    return [NSDictionary dictionaryWithObjectsAndKeys:average,@"a",highest,@"h", nil];
+
 }
 
+
+-(NSDictionary*)refValuesForMachine{    
+    
+    if ([smcWrapper isDesktop] == YES) {
+        //determined on imac but might do for mac mini and mac pro too
+        return [NSDictionary dictionaryWithObjectsAndKeys:
+                [NSDictionary dictionaryWithObjectsAndKeys:@"20",@"low",@"25",@"mid",@"30",@"high",@"35",@"max",nil],@"ambient",
+                [NSDictionary dictionaryWithObjectsAndKeys:@"45",@"low",@"50",@"mid",@"55",@"high",@"60",@"max",nil],@"hdd",
+                [NSDictionary dictionaryWithObjectsAndKeys:@"40",@"low",@"50",@"mid",@"60",@"high",@"90",@"max",nil],@"cpu",								
+                nil];
+    }else{
+		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togAir"];        
+		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togHdd"];
+		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togCpu"];        
+        //determined for macbook by guessing mostly
+        return [NSDictionary dictionaryWithObjectsAndKeys:
+                [NSDictionary dictionaryWithObjectsAndKeys:@"25",@"low",@"30",@"mid",@"35",@"high",@"45",@"max",nil],@"ambient",
+                [NSDictionary dictionaryWithObjectsAndKeys:@"40",@"low",@"50",@"mid",@"55",@"high",@"60",@"max",nil],@"hdd",
+                [NSDictionary dictionaryWithObjectsAndKeys:@"50",@"low",@"65",@"mid",@"80",@"high",@"90",@"max",nil],@"cpu",								
+                nil];            
+    }
+	
+}
 
 @end

@@ -25,8 +25,8 @@
 
 +(void)openConn;
 
-+(NSDictionary*)allocAllKeys;
-+(NSDictionary*)allocFoundKeys:(NSDictionary*)keys;
++(NSDictionary*)getAllKeys;
++(NSDictionary*)getFoundKeys:(NSDictionary*)keys;
 
 +(int) get_fan_rpm:(int)fan_number;
 +(int) get_fan_num;
