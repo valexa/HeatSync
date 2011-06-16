@@ -96,9 +96,9 @@ static NSBundle* pluginBundle = nil;
 }
 
 -(void)dealloc{
-	[super dealloc];
 	[preferences release];
 	[main release];
+	[super dealloc];    
 }	
 
 -(void)saveSetting:(id)object forKey:(NSString*)key{   
