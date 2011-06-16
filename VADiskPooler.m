@@ -136,7 +136,7 @@
 
 +(BOOL)isSleeping:(NSDictionary*)dict{ 
     //check if IdleTimerPeriod is not greater than checkFrequency which would prevent it from sleeping
-    int64_t checkFrequency = 900;    
+    int64_t checkFrequency = 660;    
     int64_t IdleTimerPeriod = [[dict objectForKey:@"IdleTimerPeriod"] intValue] / 1000ULL;
     if (IdleTimerPeriod > checkFrequency && [[dict objectForKey:@"DevicePowerState"] intValue] > 1) {
         NSLog(@"Drive is not sleeping and checkFrequency %lld is higher than IdleTimerPeriod %lld, will lie about the drive being asleep as to not prevent it from falling asleep",checkFrequency,IdleTimerPeriod);

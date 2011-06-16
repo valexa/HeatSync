@@ -205,12 +205,15 @@
     NSMutableDictionary *foundKeys = [NSMutableDictionary dictionaryWithDictionary:smcKeys];    
     
     //add smart temps
-    NSArray *drives = [VADiskPooler getDrives];
-    for (NSString *drive in drives) {
-        int temp = [VADiskPooler smartTemperature:drive];
-        //NSLog(@"SMART temp is %i for %@",temp,drive);                
-        [foundKeys setObject:[NSNumber numberWithInt:temp] forKey:[NSString stringWithFormat:@"SMART%i",[drives indexOfObject:drive]+1]];        
-    }   
+    if (CFAbsoluteTimeGetCurrent() - lastSMARTCheck > 660) {
+        NSArray *drives = [VADiskPooler getDrives];
+        for (NSString *drive in drives) {
+            int temp = [VADiskPooler smartTemperature:drive];
+            //NSLog(@"SMART temp is %i for %@",temp,drive);                
+            [foundKeys setObject:[NSNumber numberWithInt:temp] forKey:[NSString stringWithFormat:@"SMART%i",[drives indexOfObject:drive]+1]];        
+        }
+        lastSMARTCheck = CFAbsoluteTimeGetCurrent();
+    }
 	
 	//extract avg and max
     NSDictionary *ah = [self getAvgAndHigh:foundKeys];
@@ -223,7 +226,7 @@
             int highest = [[highestDict objectForKey:key] intValue];
             int avg = [[avgDict objectForKey:key] intValue];		
             if (highest != avg) {
-                NSLog(@"Multiple sensors for %@ (highest %i avg %i)",key,highest,avg);
+                //NSLog(@"Multiple sensors for %@ (highest %i avg %i)",key,highest,avg);
             }
             if (highest >= [[refDict objectForKey:@"max"] intValue]-1 ) {
                 //NSLog(@"%@ temp is max %i",key,highest);
@@ -252,7 +255,7 @@
             int highest = [[highestDict objectForKey:key] intValue];
             int avg = [[avgDict objectForKey:key] intValue];		
             if (highest != avg) {
-                NSLog(@"Multiple sensors for %@ (highest %i avg %i)",key,highest,avg);
+                //NSLog(@"Multiple sensors for %@ (highest %i avg %i)",key,highest,avg);
             }
             highestTotal += highest;
         }

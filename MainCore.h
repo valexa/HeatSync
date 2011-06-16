@@ -25,7 +25,8 @@
 @interface MainCore : NSObject {
 	NSUserDefaults *defaults;
 	NSMutableDictionary *fans;
-	NSMutableDictionary *temps;		
+	NSMutableDictionary *temps;	
+	NSTimeInterval lastSMARTCheck;
 }
 
 -(void)saveSetting:(id)object forKey:(NSString*)key;
