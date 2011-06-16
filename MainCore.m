@@ -227,21 +227,25 @@
         for (NSString *key in refValues){
             NSDictionary *refDict = [refValues objectForKey:key];
             int highest = [[highestDict objectForKey:key] intValue];
-            int avg = [[avgDict objectForKey:key] intValue];		
+            int avg = [[avgDict objectForKey:key] intValue];
+            int compare = 0;
             if (highest != avg) {
                 //NSLog(@"Multiple sensors for %@ (highest %i avg %i)",key,highest,avg);
+                compare = avg;                
+            }else{
+                compare = highest;
             }
-            if (highest >= [[refDict objectForKey:@"max"] intValue]-1 ) {
-                //NSLog(@"%@ temp is max %i",key,highest);
+            if (compare >= [[refDict objectForKey:@"max"] intValue]-1 ) {
+                //NSLog(@"%@ temp is max %i",key,compare);
                 [self setFanSpeed:@"max" ifEnabledFor:key];
-            }else if (highest >= [[refDict objectForKey:@"high"] intValue] ) {
-                //NSLog(@"%@ temp is high %i",key,highest);
+            }else if (compare >= [[refDict objectForKey:@"high"] intValue] ) {
+                //NSLog(@"%@ temp is high %i",key,compare);
                 [self setFanSpeed:@"high" ifEnabledFor:key];			
-            }else if (highest >= [[refDict objectForKey:@"mid"] intValue] ) {
-                //NSLog(@"%@ temp is mid %i",key,highest);
+            }else if (compare >= [[refDict objectForKey:@"mid"] intValue] ) {
+                //NSLog(@"%@ temp is mid %i",key,compare);
                 [self setFanSpeed:@"mid" ifEnabledFor:key];			
             }else{
-                //NSLog(@"%@ temp is low %i",key,highest);
+                //NSLog(@"%@ temp is low %i",key,compare);
                 [self setFanSpeed:@"low" ifEnabledFor:key];		                
             }	
         }        
@@ -249,7 +253,7 @@
         int maxTotals = 0;
         int highTotals = 0;
         int midTotals = 0;
-        int highestTotal = 0;
+        int total = 0;
         for (NSString *key in refValues){
             NSDictionary *refDict = [refValues objectForKey:key];
             maxTotals += [[refDict objectForKey:@"max"] intValue];
@@ -259,20 +263,22 @@
             int avg = [[avgDict objectForKey:key] intValue];		
             if (highest != avg) {
                 //NSLog(@"Multiple sensors for %@ (highest %i avg %i)",key,highest,avg);
+                total += avg;                
+            }else{
+                total += highest;                
             }
-            highestTotal += highest;
         }
-        if (highestTotal >= maxTotals) {
-            //NSLog(@"Macbook temp is max %i/%i",highestTotal,maxTotals);            
+        if (total >= maxTotals) {
+            //NSLog(@"Macbook temp is max %i/%i",total,maxTotals);            
             [self setFanSpeed:@"max" ifEnabledFor:@"Macbook"];            
-        }else if (highestTotal >= highTotals) {
-            //NSLog(@"Macbook temp is high %i/%i",highestTotal,highTotals);             
+        }else if (total >= highTotals) {
+            //NSLog(@"Macbook temp is high %i/%i",total,highTotals);             
             [self setFanSpeed:@"high" ifEnabledFor:@"Macbook"];            
-        }else if (highestTotal >= midTotals) {
-            //NSLog(@"Macbook temp is mid %i/%i",highestTotal,midTotals);             
+        }else if (total >= midTotals) {
+            //NSLog(@"Macbook temp is mid %i/%i",total,midTotals);             
             [self setFanSpeed:@"mid" ifEnabledFor:@"Macbook"];
         }else{
-            //NSLog(@"Macbook temp is low %i/%i",highestTotal,midTotals);             
+            //NSLog(@"Macbook temp is low %i/%i",total,midTotals);             
             [self setFanSpeed:@"low" ifEnabledFor:@"Macbook"];        
         }        
     }    
@@ -287,7 +293,7 @@
 		}
 	}   
 	
-	//add current temps
+	//add current highest temperatures (might want to use averages here sometimes) //TODO
 	[temps removeAllObjects];	
 	for (NSString *key in highestDict){
 		NSMutableDictionary *tmp = [[refValues objectForKey:key] mutableCopy];
