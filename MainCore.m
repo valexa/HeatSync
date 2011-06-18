@@ -293,13 +293,23 @@
 		}
 	}   
 	
-	//add current highest temperatures (might want to use averages here sometimes) //TODO
+	//add current temperature averages
 	[temps removeAllObjects];	
-	for (NSString *key in highestDict){
-		NSMutableDictionary *tmp = [[refValues objectForKey:key] mutableCopy];
-		[tmp setObject:[highestDict objectForKey:key] forKey:@"curr"];
-		[temps setObject:tmp forKey:key];		
-		[tmp release];
+	for (NSString *key in refValues){
+        NSNumber *average = [avgDict objectForKey:key];
+        NSNumber *highest = [avgDict objectForKey:key];
+        if (average && highest) {
+            NSMutableDictionary *tmp = [[refValues objectForKey:key] mutableCopy];            
+            if ([highest intValue]-[average intValue] < 10) {
+                [tmp setObject:average forKey:@"curr"];            
+            }else{
+                [tmp setObject:highest forKey:@"curr"];            
+            }
+            [temps setObject:tmp forKey:key];		
+            [tmp release];            
+        }else{
+            NSLog(@"Got nil for %@ (avg:%@ high:%@)",key,average,highest);
+        }
 	}
 	
 	[self saveSetting:allTemps forKey:@"allTemps"];
