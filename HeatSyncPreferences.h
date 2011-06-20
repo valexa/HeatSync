@@ -59,15 +59,21 @@
     
 	IBOutlet NSView *regularFansView;
 	IBOutlet NSView *macbookFansView;     
+	IBOutlet NSView *macbookAirFansView;    
     
 	IBOutlet NSButton *macbookButton;
+	IBOutlet NSButton *macbookAirButton;
+
 	IBOutlet NSImageView *macbookConnector;    
+	IBOutlet NSImageView *macbookAirConnector;    
     
 	IBOutlet NSLevelIndicator *mbLeftFanLevel;
 	IBOutlet NSLevelIndicator *mbRightFanLevel;
+	IBOutlet NSLevelIndicator *mbAirFanLevel;    
 	
 	IBOutlet NSTextField *mbLeftFanText;
 	IBOutlet NSTextField *mbRightFanText;    
+	IBOutlet NSTextField *mbAirFanText;    
 	
 }
 
@@ -78,6 +84,7 @@
 -(IBAction)togHdd:(id)sender;
 -(IBAction)togCpu:(id)sender;
 -(IBAction)togMacbok:(id)sender;
+-(IBAction)togMacbokAir:(id)sender;
 -(IBAction)changeDegrees:(id)sender;
 -(NSString*)noNilStr:(NSString*)str;
 	

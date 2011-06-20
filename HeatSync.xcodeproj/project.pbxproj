@@ -24,6 +24,8 @@
 		4AC727FA13AA4991007C0283 /* SMARTQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC727F913AA4991007C0283 /* SMARTQuery.m */; };
 		4AC7ACC213A9DE7600D914B3 /* route_macbook.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AC7ACC113A9DE7600D914B3 /* route_macbook.png */; };
 		4AD6828A1235198C0032FE4A /* smc in Resources */ = {isa = PBXBuildFile; fileRef = 4AD682891235198C0032FE4A /* smc */; };
+		4AE9D6FA13AF7BC5005C91E4 /* route_macbook_air.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AE9D6F913AF7BC5005C91E4 /* route_macbook_air.png */; };
+		4AE9D6FD13AF7CB8005C91E4 /* header_macbook_air.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AE9D6FC13AF7CB8005C91E4 /* header_macbook_air.png */; };
 		4AF39BF813A921A4008C10AB /* header_macbook.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AF39BF713A921A4008C10AB /* header_macbook.png */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
@@ -60,6 +62,8 @@
 		4AC727F913AA4991007C0283 /* SMARTQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SMARTQuery.m; path = ../DiskFailure/SMARTQuery.m; sourceTree = "<group>"; };
 		4AC7ACC113A9DE7600D914B3 /* route_macbook.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = route_macbook.png; sourceTree = "<group>"; };
 		4AD682891235198C0032FE4A /* smc */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = smc; sourceTree = "<group>"; };
+		4AE9D6F913AF7BC5005C91E4 /* route_macbook_air.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = route_macbook_air.png; sourceTree = "<group>"; };
+		4AE9D6FC13AF7CB8005C91E4 /* header_macbook_air.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = header_macbook_air.png; sourceTree = "<group>"; };
 		4AF39BF713A921A4008C10AB /* header_macbook.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = header_macbook.png; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* HeatSync.MPplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HeatSync.MPplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -170,9 +174,11 @@
 		4A5F754D123985CC00016829 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
+				4AE9D6FC13AF7CB8005C91E4 /* header_macbook_air.png */,
 				4AF39BF713A921A4008C10AB /* header_macbook.png */,
 				4A6B2BA012E0078100326F48 /* header.png */,
 				4A51F0E5123904EB007BA8EA /* fan.png */,
+				4AE9D6F913AF7BC5005C91E4 /* route_macbook_air.png */,
 				4AC7ACC113A9DE7600D914B3 /* route_macbook.png */,
 				4A51F0E6123904EB007BA8EA /* route.png */,
 				4A51F0E7123904EB007BA8EA /* thermometer.png */,
@@ -243,6 +249,8 @@
 				4A6B2BA112E0078100326F48 /* header.png in Resources */,
 				4AF39BF813A921A4008C10AB /* header_macbook.png in Resources */,
 				4AC7ACC213A9DE7600D914B3 /* route_macbook.png in Resources */,
+				4AE9D6FA13AF7BC5005C91E4 /* route_macbook_air.png in Resources */,
+				4AE9D6FD13AF7CB8005C91E4 /* header_macbook_air.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

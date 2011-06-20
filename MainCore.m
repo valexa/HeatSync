@@ -143,28 +143,28 @@
 
 	NSDictionary *settings = [[defaults objectForKey:PLUGIN_NAME_STRING] objectForKey:@"settings"];		
 	if ([type isEqualToString:@"ambient"]) {
-		if ([[settings objectForKey:@"togAir"] boolValue] != YES) return;		
-        [self setFanSpeed:speed withName:@"ODD"];
-        return;        
-	}
-	if ([type isEqualToString:@"hdd"]) {
-		if ([[settings objectForKey:@"togHdd"] boolValue] != YES) return;		
-        [self setFanSpeed:speed withName:@"HDD"];        
-        return;        
-	}
-	if ([type isEqualToString:@"cpu"]) {
-		if ([[settings objectForKey:@"togCpu"] boolValue] != YES) return;		
-        [self setFanSpeed:speed withName:@"CPU"];        
-        return;        
-	}
-	if ([type isEqualToString:@"Macbook"]) {
-		if ([[settings objectForKey:@"togMacbook"] boolValue] != YES) return;		
-        [self setFanSpeed:speed withName:@"Leftside"];           
-        [self setFanSpeed:speed withName:@"Rightside"];        
-        return;
-	}	
-    
-	NSLog(@"No fan for %@",type);
+		if ([[settings objectForKey:@"togAir"] boolValue] == YES){
+            [self setFanSpeed:speed withName:@"ODD"];
+        }
+	}else if ([type isEqualToString:@"hdd"]) {
+		if ([[settings objectForKey:@"togHdd"] boolValue] == YES){
+            [self setFanSpeed:speed withName:@"HDD"];        
+        }
+	} else if ([type isEqualToString:@"cpu"]) {
+		if ([[settings objectForKey:@"togCpu"] boolValue] == YES){
+            [self setFanSpeed:speed withName:@"CPU"];        
+        }
+	}else if ([type isEqualToString:@"Macbook"]) {
+		if ([[settings objectForKey:@"togMacbook"] boolValue] == YES){
+            [self setFanSpeed:speed withName:@"Leftside"];           
+            [self setFanSpeed:speed withName:@"Rightside"];        
+        }
+		if ([[settings objectForKey:@"togMacbookAir"] boolValue] == YES){
+            [self setFanSpeed:speed withName:@"Exhaust"];                  
+        }        
+	}else{
+        NSLog(@"No fan for %@",type);        
+    }	    
 }
 
 -(void)setFanSpeed:(NSString*)speed withName:(NSString*)name{
@@ -207,7 +207,7 @@
     NSMutableDictionary *foundKeys = [NSMutableDictionary dictionaryWithDictionary:smcKeys];    
     
     //add smart temps
-    if (CFAbsoluteTimeGetCurrent() - lastSMARTCheck > 660) {
+    if (CFAbsoluteTimeGetCurrent() - lastSMARTCheck > 960) {
         [lastSmartDict removeAllObjects];
         [lastSmartDict addObjectsFromArray:[VADiskPooler getDrives]];
         lastSMARTCheck = CFAbsoluteTimeGetCurrent();
@@ -338,7 +338,10 @@
             }             
             if ([key isEqualToString:@"Tm0P"]){ //use memory temp for macbooks
                 [hdds addObject:[foundKeys objectForKey:key]];			
-            }            
+            } 
+            if ([key isEqualToString:@"TM0P"]){ //use memory temp for macbook airs
+                [hdds addObject:[foundKeys objectForKey:key]];			
+            }             
         }         
 		if ([key isEqualToString:@"TA0P"] || [key isEqualToString:@"TA1P"]){
 			[ambients addObject:[foundKeys objectForKey:key]];			
@@ -419,6 +422,8 @@
 -(NSDictionary*)refValuesForMachine{    
     
     if ([smcWrapper isDesktop] == YES) {
+		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togMacbook"];        
+		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togMacbookAir"];       
         //determined on imac but might do for mac mini and mac pro too
         return [NSDictionary dictionaryWithObjectsAndKeys:
                 [NSDictionary dictionaryWithObjectsAndKeys:@"20",@"low",@"25",@"mid",@"30",@"high",@"35",@"max",nil],@"ambient",
@@ -431,7 +436,7 @@
 		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togCpu"];        
         //determined for macbook by guessing mostly
         return [NSDictionary dictionaryWithObjectsAndKeys:
-                [NSDictionary dictionaryWithObjectsAndKeys:@"25",@"low",@"30",@"mid",@"35",@"high",@"45",@"max",nil],@"ambient",
+                [NSDictionary dictionaryWithObjectsAndKeys:@"25",@"low",@"30",@"mid",@"35",@"high",@"40",@"max",nil],@"ambient",
                 [NSDictionary dictionaryWithObjectsAndKeys:@"40",@"low",@"50",@"mid",@"55",@"high",@"60",@"max",nil],@"hdd",
                 [NSDictionary dictionaryWithObjectsAndKeys:@"50",@"low",@"65",@"mid",@"80",@"high",@"90",@"max",nil],@"cpu",								
                 nil];            

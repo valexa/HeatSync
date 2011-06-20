@@ -138,10 +138,25 @@
 	}		
 }
 
+-(IBAction)togMacbokAir:(id)sender{
+	if ([sender state] == 1){
+		[macbookAirConnector setHidden:NO];		
+		[self saveSetting:[NSNumber numberWithBool:YES] forKey:@"togMacbookAir"];
+	}else {
+		[macbookAirConnector setHidden:YES];		
+		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togMacbookAir"];
+		[self setMinRpm:@"Exhaust"];       
+	}    
+}
+
 -(void)syncUI{
     
+    [regularFansView setFrame:NSMakeRect(19, 0, 243, 170)];    
+    [macbookFansView setFrame:NSMakeRect(19, 0, 243, 170)];    
+    [macbookAirFansView setFrame:NSMakeRect(19, 0, 243, 170)];        
     [regularFansView removeFromSuperview];
-    [macbookFansView removeFromSuperview];    
+    [macbookFansView removeFromSuperview]; 
+    [macbookAirFansView removeFromSuperview];     
 
 	NSString *smcpath = [NSString stringWithFormat:@"%@/Library/Application Support/HeatSync/smc",NSHomeDirectory()];	    
 	NSDictionary *fdict = [[NSFileManager defaultManager] attributesOfItemAtPath:smcpath error:nil];
@@ -194,6 +209,14 @@
 		[macbookButton setState:0];
 		[macbookConnector setHidden:YES];		
 	}    
+    
+	if ([[settings objectForKey:@"togMacbookAir"] boolValue] == YES) {
+		[macbookAirButton setState:1];
+		[macbookAirConnector setHidden:NO];		
+	}else {
+		[macbookAirButton setState:0];
+		[macbookAirConnector setHidden:YES];		
+	}      
 	
 	[thermometerImage setToolTip:[allTemps description]];	
 	[fanImage setToolTip:[fans description]];	
@@ -209,7 +232,9 @@
 	[cpuFanText setStringValue:[self noNilStr:[[fans objectForKey:@"CPU"] objectForKey:@"curr"]]];	
 
 	[mbLeftFanText setStringValue:[self noNilStr:[[fans objectForKey:@"Leftside"] objectForKey:@"curr"]]];
-	[mbRightFanText setStringValue:[self noNilStr:[[fans objectForKey:@"Rightside"] objectForKey:@"curr"]]];	    
+	[mbRightFanText setStringValue:[self noNilStr:[[fans objectForKey:@"Rightside"] objectForKey:@"curr"]]];
+
+    [mbAirFanText setStringValue:[self noNilStr:[[fans objectForKey:@"Exhaust"] objectForKey:@"curr"]]];
 	
 	for (NSString *key in temps){
 		NSLevelIndicator *indicator = nil;
@@ -271,33 +296,34 @@
         [cpuTempText setStringValue:@""];        
     }    
 	
+    NSString *background = nil;
 	for (NSString *key in fans){
 		NSLevelIndicator *indicator = nil;
         
 		if ([key isEqualToString:@"ODD"]) {
 			indicator = airFanLevel;
+            background = @"header.png";            
 		}else if ([key isEqualToString:@"HDD"]) {
 			indicator = hddFanLevel;
+            background = @"header.png";            
 		}else if ([key isEqualToString:@"CPU"]) {
 			indicator = cpuFanLevel;
-		}else{
-            [self.view addSubview:macbookFansView];
-            [macbookFansView setFrame:NSMakeRect(19, 0, 243, 170)];
-            NSImage *foo = [[[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"header_macbook.png"]] autorelease];            
-            [backgroundHeaders setImage:foo];                        
+            background = @"header.png";                                  
         }
         
 		if ([key isEqualToString:@"Leftside"]) {
 			indicator = mbLeftFanLevel;
+            background = @"header_macbook.png";
 		}else if ([key isEqualToString:@"Rightside"]) {
 			indicator = mbRightFanLevel;
-		}else{
-            [self.view addSubview:regularFansView];
-            [regularFansView setFrame:NSMakeRect(19, 0, 243, 170)];            
-            NSImage *foo = [[[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"header.png"]] autorelease];             
-            [backgroundHeaders setImage:foo];        
+            background = @"header_macbook.png";            
         }     
         
+		if ([key isEqualToString:@"Exhaust"]) {
+			indicator = mbAirFanLevel;            
+            background = @"header_macbook_air.png";            
+        }
+
 		if (indicator) {
 			NSDictionary *dict = [fans objectForKey:key];
 			double curr = [[dict objectForKey:@"curr"] doubleValue];
@@ -314,6 +340,23 @@
 			NSLog(@"Unbound fan type (%@)",key);
 		}		
 	}	 
+    
+    if (background) {
+        NSImage *back = [[[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:background]] autorelease];            
+        [backgroundHeaders setImage:back];     
+    }
+    
+    if ([background isEqualToString:@"header.png"]){
+        [self.view addSubview:regularFansView];                    
+    }
+    
+    if ([background isEqualToString:@"header_macbook.png"]){
+        [self.view addSubview:macbookFansView];                     
+    }   
+    
+    if ([background isEqualToString:@"header_macbook_air.png"]){
+        [self.view addSubview:macbookAirFansView];             
+    }    
     
     //hide connectors if there are no fans
     if ([fans objectForKey:@"ODD"] == nil) {      
