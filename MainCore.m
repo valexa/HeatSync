@@ -40,7 +40,7 @@
 		defaults = [NSUserDefaults standardUserDefaults];	
 		fans = [[NSMutableDictionary alloc] init];			
 		temps = [[NSMutableDictionary alloc] init];	
-		lastSmartDict = [[NSMutableArray alloc] init];	
+		lastSmartTemps = [[NSMutableArray alloc] init];	
 	
 		[smcWrapper openConn];		
 		
@@ -57,7 +57,7 @@
 -(void)dealloc{
 	[temps release];
 	[fans release];	
-    [lastSmartDict release];
+    [lastSmartTemps release];
 	[super dealloc];    
 }
 
@@ -207,15 +207,18 @@
     NSMutableDictionary *foundKeys = [NSMutableDictionary dictionaryWithDictionary:smcKeys];    
     
     //add smart temps
-    if (CFAbsoluteTimeGetCurrent() - lastSMARTCheck > 960) {
-        [lastSmartDict removeAllObjects];
-        [lastSmartDict addObjectsFromArray:[VADiskPooler getDrives]];
+    if (CFAbsoluteTimeGetCurrent() - lastSMARTCheck > 660) {
+        [lastSmartTemps removeAllObjects];
+        for (NSString *drive in [VADiskPooler getDrives]) {
+            int temp = [VADiskPooler smartTemperature:drive];
+            [lastSmartTemps addObject:[NSNumber numberWithInt:temp]];
+        }
         lastSMARTCheck = CFAbsoluteTimeGetCurrent();
     }    
-    for (NSString *drive in lastSmartDict) {
-        int temp = [VADiskPooler smartTemperature:drive];
-        //NSLog(@"SMART temp is %i for %@",temp,drive);                
-        [foundKeys setObject:[NSNumber numberWithInt:temp] forKey:[NSString stringWithFormat:@"SMART%i",[lastSmartDict indexOfObject:drive]+1]];        
+    for (NSNumber *temp in lastSmartTemps) {
+        int index = [lastSmartTemps indexOfObject:temp]+1;                
+        [foundKeys setObject:temp forKey:[NSString stringWithFormat:@"SMART%i",index]];        
+        NSLog(@"SMART temp is %@ for drive %i",temp,index);        
     }    
 	
 	//extract avg and max

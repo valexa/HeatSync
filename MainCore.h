@@ -27,7 +27,7 @@
 	NSMutableDictionary *fans;
 	NSMutableDictionary *temps;	
 	NSTimeInterval lastSMARTCheck;
-    NSMutableArray *lastSmartDict;
+    NSMutableArray *lastSmartTemps;
 }
 
 -(void)saveSetting:(id)object forKey:(NSString*)key;
