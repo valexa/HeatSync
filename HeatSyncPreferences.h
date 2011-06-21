@@ -58,13 +58,13 @@
 	IBOutlet NSImageView *backgroundHeaders; 
     
 	IBOutlet NSView *regularFansView;
-	IBOutlet NSView *macbookFansView;     
+	IBOutlet NSView *macbookProFansView;     
 	IBOutlet NSView *macbookAirFansView;    
     
-	IBOutlet NSButton *macbookButton;
+	IBOutlet NSButton *macbookProButton;
 	IBOutlet NSButton *macbookAirButton;
 
-	IBOutlet NSImageView *macbookConnector;    
+	IBOutlet NSImageView *macbookProConnector;    
 	IBOutlet NSImageView *macbookAirConnector;    
     
 	IBOutlet NSLevelIndicator *mbLeftFanLevel;

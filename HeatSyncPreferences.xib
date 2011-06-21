@@ -1165,7 +1165,7 @@
 							<int key="NSCellFlags2">33554432</int>
 							<object class="NSCustomResource" key="NSContents">
 								<string key="NSClassName">NSImage</string>
-								<string key="NSResourceName">route_macbook</string>
+								<string key="NSResourceName">route_macbook_pro</string>
 							</object>
 							<int key="NSAlign">1</int>
 							<int key="NSScale">2</int>
@@ -1285,7 +1285,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{112, 103}, {22, 18}}</string>
 						<reference key="NSSuperview" ref="479754439"/>
-						<reference key="NSNextKeyView"/>
+						<reference key="NSNextKeyView" ref="1038595844"/>
 						<int key="NSViewLayerContentsRedrawPolicy">2</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="538090810">
@@ -1589,14 +1589,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">macbookFansView</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="807887869"/>
-					</object>
-					<int key="connectionID">154</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">regularFansView</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="326469692"/>
@@ -1626,22 +1618,6 @@
 						<reference key="destination" ref="432249453"/>
 					</object>
 					<int key="connectionID">158</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">macbookButton</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="503577932"/>
-					</object>
-					<int key="connectionID">164</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">macbookConnector</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="608422470"/>
-					</object>
-					<int key="connectionID">165</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -1714,6 +1690,30 @@
 						<reference key="destination" ref="872816721"/>
 					</object>
 					<int key="connectionID">214</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">macbookProFansView</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="807887869"/>
+					</object>
+					<int key="connectionID">215</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">macbookProButton</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="503577932"/>
+					</object>
+					<int key="connectionID">216</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">macbookProConnector</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="608422470"/>
+					</object>
+					<int key="connectionID">217</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2915,7 +2915,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">214</int>
+			<int key="maxID">217</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
@@ -2938,8 +2938,8 @@
 				<string>fan</string>
 				<string>header</string>
 				<string>route</string>
-				<string>route_macbook</string>
 				<string>route_macbook_air</string>
+				<string>route_macbook_pro</string>
 				<string>thermometer</string>
 			</object>
 			<object class="NSMutableArray" key="dict.values">

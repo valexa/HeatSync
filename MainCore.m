@@ -153,7 +153,7 @@
             [self setFanSpeed:speed withName:@"CPU"];        
         }
 	}else if ([type isEqualToString:@"Macbook"]) {
-		if ([[settings objectForKey:@"togMacbook"] boolValue] == YES){
+		if ([[settings objectForKey:@"togMacbookPro"] boolValue] == YES){
             [self setFanSpeed:speed withName:@"Leftside"];           
             [self setFanSpeed:speed withName:@"Rightside"];        
         }
@@ -334,7 +334,7 @@
             if ([key isEqualToString:@"TB0T"]){ //use bottom temp for macbooks
                 [ambients addObject:[foundKeys objectForKey:key]];		
             }             
-            if ([key isEqualToString:@"Tm0P"]){ //use memory temp for macbooks
+            if ([key isEqualToString:@"Tm0P"]){ //use memory temp for macbook pros
                 [hdds addObject:[foundKeys objectForKey:key]];			
             } 
             if ([key isEqualToString:@"TM0P"]){ //use memory temp for macbook airs
@@ -420,7 +420,7 @@
 -(NSDictionary*)refValuesForMachine{    
     
     if ([smcWrapper isDesktop] == YES) {
-		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togMacbook"];        
+		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togMacbookPro"];        
 		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togMacbookAir"];       
         //determined on imac but might do for mac mini and mac pro too
         return [NSDictionary dictionaryWithObjectsAndKeys:

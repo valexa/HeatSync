@@ -128,11 +128,11 @@
 
 -(IBAction)togMacbok:(id)sender{		
 	if ([sender state] == 1){
-		[macbookConnector setHidden:NO];		
-		[self saveSetting:[NSNumber numberWithBool:YES] forKey:@"togMacbook"];
+		[macbookProConnector setHidden:NO];		
+		[self saveSetting:[NSNumber numberWithBool:YES] forKey:@"togMacbookPro"];
 	}else {
-		[macbookConnector setHidden:YES];		
-		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togMacbook"];
+		[macbookProConnector setHidden:YES];		
+		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togMacbookPro"];
 		[self setMinRpm:@"Leftside"];
 		[self setMinRpm:@"Rightside"];        
 	}		
@@ -152,10 +152,10 @@
 -(void)syncUI{
     
     [regularFansView setFrame:NSMakeRect(19, 0, 243, 170)];    
-    [macbookFansView setFrame:NSMakeRect(19, 0, 243, 170)];    
+    [macbookProFansView setFrame:NSMakeRect(19, 0, 243, 170)];    
     [macbookAirFansView setFrame:NSMakeRect(19, 0, 243, 170)];        
     [regularFansView removeFromSuperview];
-    [macbookFansView removeFromSuperview]; 
+    [macbookProFansView removeFromSuperview]; 
     [macbookAirFansView removeFromSuperview];     
 
 	NSString *smcpath = [NSString stringWithFormat:@"%@/Library/Application Support/HeatSync/smc",NSHomeDirectory()];	    
@@ -164,12 +164,12 @@
 		[airButton setEnabled:YES];
 		[cpuButton setEnabled:YES];
 		[hddButton setEnabled:YES];	
-		[macbookButton setEnabled:YES];	        
+		[macbookProButton setEnabled:YES];	        
 	} else {
 		[airButton setEnabled:NO];
 		[cpuButton setEnabled:NO];
 		[hddButton setEnabled:NO];
-		[macbookButton setEnabled:NO];        
+		[macbookProButton setEnabled:NO];        
 	}    
 		
 	NSDictionary *defaults = [[NSUserDefaults standardUserDefaults] persistentDomainForName:PREFS_PLIST_DOMAIN];	
@@ -202,12 +202,12 @@
 		[cpuConnector setHidden:YES];		
 	}	
     
-	if ([[settings objectForKey:@"togMacbook"] boolValue] == YES) {
-		[macbookButton setState:1];
-		[macbookConnector setHidden:NO];		
+	if ([[settings objectForKey:@"togMacbookPro"] boolValue] == YES) {
+		[macbookProButton setState:1];
+		[macbookProConnector setHidden:NO];		
 	}else {
-		[macbookButton setState:0];
-		[macbookConnector setHidden:YES];		
+		[macbookProButton setState:0];
+		[macbookProConnector setHidden:YES];		
 	}    
     
 	if ([[settings objectForKey:@"togMacbookAir"] boolValue] == YES) {
@@ -313,10 +313,10 @@
         
 		if ([key isEqualToString:@"Leftside"]) {
 			indicator = mbLeftFanLevel;
-            background = @"header_macbook.png";
+            background = @"header_macbook_pro.png";
 		}else if ([key isEqualToString:@"Rightside"]) {
 			indicator = mbRightFanLevel;
-            background = @"header_macbook.png";            
+            background = @"header_macbook_pro.png";            
         }     
         
 		if ([key isEqualToString:@"Exhaust"]) {
@@ -350,8 +350,8 @@
         [self.view addSubview:regularFansView];                    
     }
     
-    if ([background isEqualToString:@"header_macbook.png"]){
-        [self.view addSubview:macbookFansView];                     
+    if ([background isEqualToString:@"header_macbook_pro.png"]){
+        [self.view addSubview:macbookProFansView];                     
     }   
     
     if ([background isEqualToString:@"header_macbook_air.png"]){
@@ -372,8 +372,8 @@
 		[cpuConnector setHidden:YES];	        
     }
     if ([fans objectForKey:@"Leftside"] == nil || [fans objectForKey:@"Rightside"] == nil) {     
-		[macbookButton setHidden:YES];
-		[macbookConnector setHidden:YES];	        
+		[macbookProButton setHidden:YES];
+		[macbookProConnector setHidden:YES];	        
     }   
     if ([fans objectForKey:@"Exhaust"] == nil) {     
 		[macbookAirButton setHidden:YES];
