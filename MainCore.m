@@ -212,13 +212,14 @@
         for (NSString *drive in [VADiskPooler getDrives]) {
             int temp = [VADiskPooler smartTemperature:drive];
             [lastSmartTemps addObject:[NSNumber numberWithInt:temp]];
+            //NSLog(@"SMART temp is %i for drive %@",temp,drive);            
         }
         lastSMARTCheck = CFAbsoluteTimeGetCurrent();
     }    
     for (NSNumber *temp in lastSmartTemps) {
         int index = [lastSmartTemps indexOfObject:temp]+1;                
         [foundKeys setObject:temp forKey:[NSString stringWithFormat:@"SMART%i",index]];        
-        NSLog(@"SMART temp is %@ for drive %i",temp,index);        
+        //NSLog(@"SMART temp is %@ for drive %i",temp,index);        
     }    
 	
 	//extract avg and max
