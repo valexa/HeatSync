@@ -374,7 +374,11 @@
     if ([fans objectForKey:@"Leftside"] == nil || [fans objectForKey:@"Rightside"] == nil) {     
 		[macbookButton setHidden:YES];
 		[macbookConnector setHidden:YES];	        
-    }    
+    }   
+    if ([fans objectForKey:@"Exhaust"] == nil) {     
+		[macbookAirButton setHidden:YES];
+		[macbookAirConnector setHidden:YES];	        
+    }       
 	
 }
 
