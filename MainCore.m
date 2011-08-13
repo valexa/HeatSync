@@ -364,7 +364,9 @@
 		for (NSNumber *val in ambients){
 			total += [val intValue]; 
 		}
-		[average setObject:[NSNumber numberWithInt:total/[ambients count]] forKey:@"ambient"];			
+        int ambient = total/[ambients count];
+        if (ambient > 30) ambient = ambient - 5; //assume air gets heated 5 extra degrees while flowing trough casing if over 30
+		[average setObject:[NSNumber numberWithInt:ambient] forKey:@"ambient"];			
 	}else {
 		NSLog(@"No Ambient sensors found");
 	}    
