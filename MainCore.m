@@ -365,7 +365,7 @@
 			total += [val intValue]; 
 		}
         int ambient = total/[ambients count];
-        if (ambient > 30) ambient = ambient - 5; //assume air gets heated 5 extra degrees while flowing trough casing if over 30
+        if (ambient > 32) ambient = ambient - 6; //assume air gets heated 6 extra degrees while flowing trough casing if over 32
 		[average setObject:[NSNumber numberWithInt:ambient] forKey:@"ambient"];			
 	}else {
 		NSLog(@"No Ambient sensors found");
@@ -426,7 +426,7 @@
 		[self saveSetting:[NSNumber numberWithBool:NO] forKey:@"togMacbookAir"];       
         //determined on imac but might do for mac mini and mac pro too
         return [NSDictionary dictionaryWithObjectsAndKeys:
-                [NSDictionary dictionaryWithObjectsAndKeys:@"20",@"low",@"25",@"mid",@"30",@"high",@"35",@"max",nil],@"ambient",
+                [NSDictionary dictionaryWithObjectsAndKeys:@"25",@"low",@"30",@"mid",@"35",@"high",@"40",@"max",nil],@"ambient",
                 [NSDictionary dictionaryWithObjectsAndKeys:@"45",@"low",@"50",@"mid",@"55",@"high",@"60",@"max",nil],@"hdd",
                 [NSDictionary dictionaryWithObjectsAndKeys:@"40",@"low",@"50",@"mid",@"60",@"high",@"90",@"max",nil],@"cpu",								
                 nil];
