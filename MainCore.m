@@ -67,7 +67,7 @@
 	}     
     NSDictionary *prefs = [NSDictionary dictionaryWithDictionary:[defaults objectForKey:PLUGIN_NAME_STRING]];    
     if ([prefs objectForKey:@"settings"] == nil) {
-        NSMutableDictionary *d = [[NSMutableDictionary dictionaryWithDictionary:prefs] autorelease];
+        NSMutableDictionary *d = [NSMutableDictionary dictionaryWithDictionary:prefs];
         [d setObject:[[[NSDictionary alloc] init] autorelease] forKey:@"settings"];
         prefs = d;
     }
