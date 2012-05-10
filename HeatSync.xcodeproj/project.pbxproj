@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A0947EF153536E00035D5C7 /* SMARTQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A324D3E14F03D0100C73DD2 /* SMARTQuery.m */; };
 		4A4BDAC91241D4B3005DE837 /* fan.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A51F0E5123904EB007BA8EA /* fan.png */; };
 		4A4BDACA1241D4B3005DE837 /* route.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A51F0E6123904EB007BA8EA /* route.png */; };
 		4A4BDACB1241D4B3005DE837 /* thermometer.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A51F0E7123904EB007BA8EA /* thermometer.png */; };
@@ -21,7 +22,6 @@
 		4AC2E55F1231899E002B5F84 /* smcWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC2E55D1231899E002B5F84 /* smcWrapper.m */; };
 		4AC2E68212318C99002B5F84 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AC2E68112318C99002B5F84 /* IOKit.framework */; };
 		4AC727EE13AA43F6007C0283 /* VADiskPooler.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC727ED13AA43F6007C0283 /* VADiskPooler.m */; };
-		4AC727FA13AA4991007C0283 /* SMARTQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC727F913AA4991007C0283 /* SMARTQuery.m */; };
 		4AC7ACC213A9DE7600D914B3 /* route_macbook_pro.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AC7ACC113A9DE7600D914B3 /* route_macbook_pro.png */; };
 		4AD6828A1235198C0032FE4A /* smc in Resources */ = {isa = PBXBuildFile; fileRef = 4AD682891235198C0032FE4A /* smc */; };
 		4AE9D6FA13AF7BC5005C91E4 /* route_macbook_air.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AE9D6F913AF7BC5005C91E4 /* route_macbook_air.png */; };
@@ -37,6 +37,8 @@
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		32DBCF630370AF2F00C91783 /* HeatSync_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeatSync_Prefix.pch; sourceTree = "<group>"; };
+		4A324D3E14F03D0100C73DD2 /* SMARTQuery.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SMARTQuery.m; path = ../../DiskFailure/DiskSMART/DiskSMART/SMARTQuery.m; sourceTree = "<group>"; };
+		4A324D3F14F03D0100C73DD2 /* SMARTQuery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SMARTQuery.h; path = ../../DiskFailure/DiskSMART/DiskSMART/SMARTQuery.h; sourceTree = "<group>"; };
 		4A51F0D31239044A007BA8EA /* HeatSyncPreferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeatSyncPreferences.xib; sourceTree = "<group>"; };
 		4A51F0E5123904EB007BA8EA /* fan.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fan.png; sourceTree = "<group>"; };
 		4A51F0E6123904EB007BA8EA /* route.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = route.png; sourceTree = "<group>"; };
@@ -58,8 +60,6 @@
 		4AC4BB11123DD0F10067A5C7 /* HeatSyncPreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeatSyncPreferences.m; sourceTree = "<group>"; };
 		4AC727EC13AA43F6007C0283 /* VADiskPooler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VADiskPooler.h; sourceTree = "<group>"; };
 		4AC727ED13AA43F6007C0283 /* VADiskPooler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VADiskPooler.m; sourceTree = "<group>"; };
-		4AC727F813AA4991007C0283 /* SMARTQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMARTQuery.h; path = ../DiskFailure/SMARTQuery.h; sourceTree = "<group>"; };
-		4AC727F913AA4991007C0283 /* SMARTQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SMARTQuery.m; path = ../DiskFailure/SMARTQuery.m; sourceTree = "<group>"; };
 		4AC7ACC113A9DE7600D914B3 /* route_macbook_pro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = route_macbook_pro.png; sourceTree = "<group>"; };
 		4AD682891235198C0032FE4A /* smc */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = smc; sourceTree = "<group>"; };
 		4AE9D6F913AF7BC5005C91E4 /* route_macbook_air.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = route_macbook_air.png; sourceTree = "<group>"; };
@@ -129,8 +129,8 @@
 				4A92278312E330F300481921 /* MainCore.m */,
 				4AC727EC13AA43F6007C0283 /* VADiskPooler.h */,
 				4AC727ED13AA43F6007C0283 /* VADiskPooler.m */,
-				4AC727F813AA4991007C0283 /* SMARTQuery.h */,
-				4AC727F913AA4991007C0283 /* SMARTQuery.m */,
+				4A324D3E14F03D0100C73DD2 /* SMARTQuery.m */,
+				4A324D3F14F03D0100C73DD2 /* SMARTQuery.h */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -215,8 +215,11 @@
 /* Begin PBXProject section */
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+			};
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "HeatSync" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -261,13 +264,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A0947EF153536E00035D5C7 /* SMARTQuery.m in Sources */,
 				4A4BDACD1241D4B9005DE837 /* HeatSyncPreferences.m in Sources */,
 				4AC2E55812318900002B5F84 /* HeatSync.m in Sources */,
 				4AC2E55E1231899E002B5F84 /* smc.c in Sources */,
 				4AC2E55F1231899E002B5F84 /* smcWrapper.m in Sources */,
 				4A92278412E330F300481921 /* MainCore.m in Sources */,
 				4AC727EE13AA43F6007C0283 /* VADiskPooler.m in Sources */,
-				4AC727FA13AA4991007C0283 /* SMARTQuery.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,9 +292,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -300,6 +303,7 @@
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = HeatSync;
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = MPplugin;
 			};
 			name = Debug;
@@ -308,6 +312,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CODE_SIGN_IDENTITY = "Developer ID Application: Vlad Alexa";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -316,6 +322,8 @@
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = HeatSync;
+				PROVISIONING_PROFILE = "";
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = MPplugin;
 			};
 			name = Release;
@@ -332,8 +340,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = MPplugin;
 			};
 			name = Debug;
@@ -349,8 +356,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = MPplugin;
 			};
 			name = Release;

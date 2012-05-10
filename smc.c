@@ -240,6 +240,7 @@ kern_return_t SMCReadKey2(UInt32Char_t key, SMCVal_t *val,io_connect_t conn)
 
     return kIOReturnSuccess;
 }
+
 kern_return_t SMCReadKey(UInt32Char_t key, SMCVal_t *val)
 {
     kern_return_t result;
