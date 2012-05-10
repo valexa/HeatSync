@@ -200,8 +200,7 @@
 	NSDictionary *refValues = [self refValuesForMachine];
     	
 	//actual values
-	NSDictionary *allKeys = [smcWrapper getAllKeys];
-	NSDictionary *smcKeys = [smcWrapper getFoundKeys:allKeys];    
+	NSDictionary *smcKeys = [smcWrapper getKeyValues];    
     NSMutableDictionary *foundKeys = [NSMutableDictionary dictionaryWithDictionary:smcKeys];    
     
     //add smart temps
@@ -283,6 +282,7 @@
 	
 	//make list of temps associated with their descriptions
 	NSMutableDictionary *allTemps = [NSMutableDictionary dictionaryWithCapacity:1];
+    NSDictionary *allKeys = [smcWrapper getAllKeys];
 	for (NSString *key in allKeys){
 		NSNumber *val = [foundKeys objectForKey:key];
 		if (val){

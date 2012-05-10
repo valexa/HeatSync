@@ -42,8 +42,9 @@ io_connect_t conn;
 
 #pragma mark temps
 
-+(NSDictionary*)getAllKeys{
-	NSMutableDictionary *keys = [[NSMutableDictionary alloc] init];
++(NSDictionary*)getAllKeys
+{
+	NSMutableDictionary *keys = [NSMutableDictionary dictionaryWithCapacity:1];
 	[keys setValue:@"Memory Controller" forKey:@"Tm0P"];
 	[keys setValue:@"Mem Bank A1" forKey:@"TM0P"];
 	[keys setValue:@"Mem Bank A2" forKey:@"TM1P"];
@@ -139,24 +140,33 @@ io_connect_t conn;
 	[keys setValue:@"MB unknown battery related (ui8)" forKey:@"B0Am"];
 	[keys setValue:@"MB unknown battery related (ui8)" forKey:@"B0Ar"];  
     */     
-	return [keys autorelease];
+	return keys;
 }
 
-+ (NSDictionary*)getFoundKeys:(NSDictionary*)keys {
-	NSMutableDictionary *foundKeys = [[NSMutableDictionary alloc] init];
++ (NSDictionary*)getKeyValues
+{
+	NSString *cachePath = [NSString stringWithFormat:@"%@/Library/Application Support/HeatSync/keys.plist",NSHomeDirectory()];
+    NSMutableDictionary *cachedKeys = [NSMutableDictionary dictionaryWithContentsOfFile:cachePath];
+    if (cachedKeys == nil) cachedKeys = [NSMutableDictionary dictionaryWithDictionary:[smcWrapper getAllKeys]];
+    NSMutableDictionary *loopKeys = [NSMutableDictionary dictionaryWithContentsOfFile:cachePath];   
+    if (loopKeys == nil) loopKeys = [NSMutableDictionary dictionaryWithDictionary:[smcWrapper getAllKeys]];    
+	NSMutableDictionary *foundKeys = [NSMutableDictionary dictionaryWithCapacity:1];
     SMCVal_t      val;	
-	for(NSString *key in keys){
+	for(NSString *key in loopKeys){
 		kern_return_t result = SMCReadKey2((char *)[key cStringUsingEncoding:NSASCIIStringEncoding], &val,conn);
 		if (result == kIOReturnSuccess){
 			if (val.dataSize > 0) {
                 int value = ((val.bytes[0] * 256 + val.bytes[1]) >> 2)/64;
 				if(value <= 0) continue;				
 				[foundKeys setValue:[NSNumber numberWithInt:value] forKey:key];				
-			}
+			}else {
+                [cachedKeys removeObjectForKey:key];                
+            }
 		}
 	}
-	if ([foundKeys count] == 0) NSLog(@"allocFoundKeys found nothing");
-	return [foundKeys autorelease];
+    [cachedKeys writeToFile:cachePath atomically:YES];
+	if ([foundKeys count] == 0) NSLog(@"getKeyValues found nothing");
+	return foundKeys;
 }
 
 #pragma mark fans
