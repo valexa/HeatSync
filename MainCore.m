@@ -331,9 +331,12 @@
 	
 	for (NSString *key in foundKeys){		
         if ([smcWrapper isDesktop] != YES) {   
-            if ([key isEqualToString:@"TB0T"]){ //use bottom temp for macbooks
+            if ([key isEqualToString:@"TB0T"]){ //use bottom temp for macbook pro
                 [ambients addObject:[foundKeys objectForKey:key]];		
-            }             
+            }
+            if ([key isEqualToString:@"Th1H"]){ //use heatsync B temp for macbook air
+                [ambients addObject:[foundKeys objectForKey:key]];
+            }
             if ([key isEqualToString:@"Tm0P"]){ //use memory temp for macbook pros
                 [hdds addObject:[foundKeys objectForKey:key]];			
             } 

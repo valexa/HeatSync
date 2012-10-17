@@ -17,11 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>BNDL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.4</string>
+	<string>1.5</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>5</string>
+	<string>6</string>
 	<key>MPDescriptionString</key>
 	<string>Syncs the air cpu and hdd temperatures and with the rpm of their corresponding fans increasing one as the other is raising</string>
 	<key>MPUrlString</key>
